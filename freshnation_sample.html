@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Fresh Nation Sample</title>
+    <meta name="description" content="This is a sample of the map for Patch's map of farmer's markets in local areas. Data from Fresh Nation.">
+    <meta name="author" content="Patch.com">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/freshnation_sample.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <!--[if IE]><link rel="stylesheet" href="../css/leaflet.ie.css" /><![endif]-->
+    <link rel="stylesheet" href="fonts/fonts.css" type="text/css" />
+
+    <script type="text/javascript">
+    	var fresh_markets, map;
+    
+// Create and load map using MapBox Tile
+  	  function initialize() {
+  			map = new L.Map('map_canvas').setView(new L.LatLng(40.690137,-73.856609), 11); 
+
+        var mapboxUrl = 'http://{s}.tiles.mapbox.com/v3/cartodb.map-1nh578vv/{z}/{x}/{y}.png',
+            mapbox = new L.TileLayer(mapboxUrl, {maxZoom: 17,attribution:"Powered by Leaflet and Mapbox"});
+        map.addLayer(mapbox,true);
+              
+
+    		
+// Get User's Data (Need to Fix)
+          
+          var tD = new Date();
+var datenow = (tD.getMonth() + 1) + "-" + tD.getDay() + "-" + tD.getFullYear();
+$('#datebox').html(datenow);
+
+// Gets the points from CartoDB and makes a layer
+
+var query="SELECT * FROM {{table_name}}";
+        fresh_markets = new L.CartoDBLayer({
+          map: map,
+          user_name:'patchdata',
+          table_name: 'fresh_market_sample',
+          query: query,
+          interactivity: "cartodb_id, address, city, market, state, seasonsdates, zipcode, marketlinktofnsite",
+
+// Create Label that pops up when you hover over a marker
+
+          featureOver: function(ev,latlng,pos,data) {
+            document.body.style.cursor = "pointer";
+            showTooltipHover(data,pos)
+            
+             function showTooltipHover(data,point) {
+        var html = "";
+        html += "<home_name>" + data.market +"</home_name>";
+        $("#tooltip").html(html);
+        $("#tooltip").css({left: (point.x + 5) + 'px', top: (point.y - 60) + 'px'})
+         $("#tooltip").fadeIn();
+         
+         
+      }
+
+// Create Search Bar (Need to Fix)
+         var mapa = $('#map_canvas');
+         
+         new L.Control.GeoSearch({
+provider: new L.GeoSearch.Provider.Google()
+}).addTo(mapa);       
+          },
+          
+// Makes label disappear when you hover away from a marker
+          featureOut: function() {
+            document.body.style.cursor = "default";
+            $("#tooltip").hide();
+            
+          },
+          
+// Makes pop-up box with all of the info appear when you click on marker
+          featureClick: function(ev,latlng,pos,data) {
+          document.body.style.cursor = "pointer";
+            showTooltip(data,pos)
+            
+             function showTooltip(data,point) {
+        var html = "";
+        html += "<home_name>" + data.market +"</home_name>";
+        html += "<label>Address: <r>" + data.address + " <br>" + data.city + " , " + data.state + "  " + data.zipcode + "</label>";
+        html += "<label>Check out Fresh Nation for more info: <a href=" + data.marketlinktofnsite + "></a> ";
+        $("#tooltip").html(html);
+        $("#tooltip").css({left: (point.x + 5) + 'px', top: (point.y - 60) + 'px'})
+         $("#tooltip").fadeIn();
+         }
+              
+          },
+          auto_bound: false
+        });
+
+// Adds CartoDB layer with all of the points to the Map Tile
+        map.addLayer(fresh_markets)
+        
+      
+
+
+      
+  	  
+}    </script>
+    
+  </head>
+  <body onload="initialize()">
+   <div class="alert alert-info" id="tooltip">
+      <p>Tooltip</p>
+  
+    
+      
+    </div>  
+    
+<!--   The Map -->
+  <div id="map_canvas"></div>
+  
+<!--   These are the checkboxes on the left (Need to Fix) -->
+  
+    <div id="content">
+            <div id="check"><input name="checkbox_name" id="checkbox_3" type="checkbox" onClick="changeLayer('All')" checked> <br>
+             MON </div>
+            <div id="check"> <input name="checkbox_name" id="checkbox_2" type="checkbox" onClick="changeLayer('For Profit')" >  <br>TUES </div>
+            <div id="check">  <input name="checkbox_name" id="checkbox_1" type="checkbox" onClick="changeLayer('Non Profit- Corporation')"  >  <br> WED </div>
+            <div id="check"> <input name="checkbox_name" id="checkbox_4" type="checkbox" onClick="changeLayer('Non Profit- Churches/Other')" >  <br>THURS </div>
+            <div id="check">  <input name="checkbox_name" id="checkbox_5" type="checkbox" onClick="changeLayer('Government')" >  <br> FRI </div>
+        <div id="check"><div id="datebox"></div></div>
+            
+        </div>
+ 
+    
+     
+     
+    
+
+ <script type="text/javascript">
+ 
+ // The code that changes the markers shown when a day of the week is checked on the left
+     function changeLayer(layer) {
+          if (layer=='All') {
+              nursing_homes.setQuery("SELECT * FROM nursing_homes_data");
+          
+          } else if (layer=='For Profit') {
+              nursing_homes.setQuery("SELECT * FROM nursing_homes_data WHERE nursing_homes_data.ownership_num='1'");
+            
+          } else if (layer=='Non Profit- Corporation') {
+              nursing_homes.setQuery("SELECT * FROM nursing_homes_data WHERE nursing_homes_data.ownership_num='2'");
+              
+          } else if (layer=='Government') {
+              nursing_homes.setQuery("SELECT * FROM nursing_homes_data WHERE nursing_homes_data.ownership_num='3'");
+          
+          } else if (layer=='Non-Profit- Churches/Other') {
+    
+              nursing_homes.setQuery("SELECT * FROM nursing_homes_data WHERE nursing_homes_data.ownership_num='4'");
+          }
+         
+          
+  	  }
+  	  
+  	  
+  	  </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script type="text/javascript" src="js/wax.leaf.min.js"></script>
+    <script type="text/javascript" src="dist/cartodb-leaflet-min.js"></script>
+    <script type="text/javascript" src="dist/cartodb-popup-min.js"></script> 
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
+

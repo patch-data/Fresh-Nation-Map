@@ -1,0 +1,91 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width:100%;
+  height: 100%;
+}
+
+#map_canvas {
+    height: 100%;
+    width: 100%;
+    margin:0 auto;
+    border-left: 2px solid green;
+    border-right: 2px solid green;  }
+
+
+#content {
+    height: 100%;
+	width: 60px;
+	position: absolute;
+	top: 0px;
+	left: 50px;
+	margin: 0 auto;
+    background: rgb(0,87,1); /* old ie */
+    background: rgba(0,87,1,.7);
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #0B3D01;
+    border-right: 1px solid #0B3D01;
+    border-left: 1px solid #0B3D01;
+    z-index: 1001;
+    }
+    
+#check {
+text-align: center;
+color: white;
+width: 100%;
+height: auto;
+padding: 10px 0;
+}    
+    
+#about {
+    margin: 0 auto;
+    width:800px;
+    padding: 0 20px;
+    bottom: 0px;
+    }
+
+
+#tooltip {
+  position:absolute;
+  width:100px;
+  height:auto;
+  padding:10px;
+  z-index:1000;
+  display:none;
+  opacity: 0.8;
+  background:white;
+  border-color:#252525!important;
+  font:normal 12px Arial!important;
+  color:#666666!important;
+}
+
+#tooltip a {
+color: green;
+}
+
+#tooltip label {
+padding: 5px 0 0px 0;
+font-size: 13px;
+font-family: 'OpenSans', sans-serif;
+-webkit-font-smoothing: antialiased;}
+
+#tooltip home_name {font-weight:bold;
+color:#67000D;
+font-size: 14px;
+text-align: center;
+font-family: 'OswaldBook', "Arial Narrow", sans-serif;
+-webkit-font-smoothing: antialiased;
+}
+
+
+#tooltip r {
+color:#A50F15;
+font-weight: bold;
+font-family: 'OpenSans', sans-serif;
+-webkit-font-smoothing: antialiased;
+}
+#tooltip td {
+padding:0px 10px 0px 0;
+text-align: left;
+}
+
