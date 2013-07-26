@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Fresh Nation Sample</title>
+    <meta name="description" content="This is a sample of the map for Patch's map of farmer's markets in local areas. Data from Fresh Nation.">
+    <meta name="author" content="Patch.com">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <link href="css/freshnation_sample.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/leaflet.css" />
+    
+    <!--[if IE]><link rel="stylesheet" href="../css/leaflet.ie.css" /><![endif]-->
+
+    <script type="text/javascript">
+     function initialize() {
+    	$.getJSON('http://patchdata.cartodb.com/api/v2/sql/?q=SELECT * FROM freshnation_markets LIMIT 2', function(data){
+    	var seasonsdates = data.rows[0]['seasonsdates'];
+    	console.log(seasonsdates);
+    	
+   for (var i = 0; i < seasonsdates.length; i++) {
+    console.log(OpenDate[i]);
+    }
+}); 
+};
+
+initialize();
+</script>
+ <script type="text/javascript">
+
+			
+   </script>
+    
+
+ 
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.js"></script>
+    <script type="text/javascript" src="js/wax.leaf.min.js"></script>
+    <script type="text/javascript" src="dist/cartodb-leaflet-min.js"></script>
+    <script type="text/javascript" src="dist/cartodb-popup-min.js"></script> 
+    <script src="js/bootstrap.min.js"></script>
+      </head>
+      <body>
+      <div id="embed"></div>
+  </body>
+</html>
+

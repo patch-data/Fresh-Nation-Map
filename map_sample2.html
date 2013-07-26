@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Fresh Nation Sample Map</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.css" />
+ <!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.ie.css" />
+ <![endif]-->
+  <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min.js"></script>
+     <script src="https://raw.github.com/gf3/moment-range/master/lib/moment-range.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.js"></script>
+    <script type="text/javascript" src="js/wax.leaf.min.js"></script>
+    <script type="text/javascript" src="dist/cartodb-leaflet-min.js"></script>
+    <script type="text/javascript" src="dist/cartodb-popup-min.js"></script> 
+    <script src="js/bootstrap.min.js"></script>
+</head>
+<body>
+	
+
+	 <script src="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.js"></script>
+	<script>
+
+     
+$.getJSON('http://patchdata.cartodb.com/api/v2/sql/?q=SELECT * FROM freshnation_markets', function(data){
+var map = L.map('map', {
+			center: [40.68841,-73.966007],
+			zoom: 13,
+			});
+			
+	L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+			}).addTo(map);
+			
+	map.attributionControl.setPrefix(false);
+	for (var i = 0; i < data.rows.length; i++) {
+       var seasonsdates = eval(data.rows[i]['seasonsdates']);
+ 			if (typeof seasonsdates[0] !== 'undefined' ) {
+ 				var lat = data.rows[i].latitude;
+    			var lng = data.rows[i].longitude;
+    			var market = data.rows[i].market;
+				var now = moment();
+				var address = data.rows[i].address;
+       				
+   				var opendate = seasonsdates[0]['OpenDate'];
+   				var closeddate = seasonsdates[0]['ClosedDate'];
+   				var saturday = seasonsdates[0]['Saturday'];
+   				var sunday = seasonsdates[0]['Sunday'];
+   				var friday = seasonsdates[0]['Friday'];
+   				var monday = seasonsdates[0]['Monday'];
+   				var tuesday = seasonsdates[0]['Tuesday'];
+   				var wednesday = seasonsdates[0]['Wednesday'];
+   				var thursday = seasonsdates[0]['Thursday'];
+   
+   					var html = '';
+       				html += '<b>Market: </b> '+market+'';
+       				html += '<br><b>Address</b> '+address+'';
+ 					html += '<br><b>Open Date:</b> '+moment(opendate).format('MMMM D, YYYY')+'';
+  					html += '<br><b>Closed Date:</b> '+moment(closeddate).format('MMMM D, YYYY')+'';
+  					html += '<br><b>Today is</b>: '+moment(now).format('MMMM D, YYYY')+'';
+  					
+  				var start = new Date(opendate)
+  					, end   = new Date(closeddate)
+  					, when  = moment(now, "YYYY-MM-DD")
+  					, range = moment().range(start, end);
+  				var answer = when.within(range);
+  				
+  				if (answer == true) {
+  					html += "<br><b>It's open!</b>";
+  					} else {
+  					html += "<br><b>It's closed!</b>";
+  					}
+  					
+  			// 		
+//   			 if (data.rows[i].critd < 1){
+//         marker = new L.Marker([data.rows[i].latitude, data.rows[i].longitude], {icon: passIcon});
+//         } else if (data.rows[i].critd > 1){
+//         marker = new L.Marker([data.rows[i].latitude, data.rows[i].longitude], {icon: failIcon});
+//         }
+function changeLayer(layer) {
+        if (layer=='Sat') {
+          			
+  			if(typeof saturday != 'undefined') {
+  					html += "<br><b>Saturday: </b>"+ saturday + "";
+  				satmarker = new L.Marker([lat,lng]).bindPopup(html);
+  					map.addLayer(satmarker);
+          			} 
+  				}
+  			if(typeof sunday != 'undefined') {
+  					html += "<br><b>Sunday: </b>"+ sunday + "";
+  				sunmarker = new L.Marker([lat,lng]).bindPopup(html);
+  					
+  				}		
+  			if(typeof friday != 'undefined') {
+  					html += "<br><b>Friday: </b>"+ friday + "";
+  				frimarker = new L.Marker([lat,lng]).bindPopup(html);
+  					
+  				}
+  			if(typeof monday != 'undefined') {
+  					html += "<br><b>Monday: </b>"+ monday + "";
+  				monmarker = new L.Marker([lat,lng]).bindPopup(html);
+  					if (layer=='Sat') {
+          			map.addLayer(satmarker);
+          			} 
+  				}
+  			if(typeof tuesday != 'undefined') {
+  					html += "<br><b>Tuesday: </b>"+ tuesday + "";
+  				tuesmarker = new L.Marker([lat,lng]).bindPopup(html);
+  				}
+  			if(typeof wednesday != 'undefined') {
+  					html += "<br><b>Wednesday: </b>"+ wednesday + "";
+  				wedmarker = new L.Marker([lat,lng]).bindPopup(html);
+  				}
+  			if(typeof thursday != 'undefined') {
+  					html += "<br><b>Thursday: </b>"+ thursday + "";
+  				thursmarker = new L.Marker([lat,lng]).bindPopup(html);
+  				}
+  				
+  				
+  				}
+  					
+  				
+  			
+  			
+  	}
+  	}
+
+	
+	})
+	
+	
+	     
+          
+		
+
+
+//     var now = moment("12-25-1995", "MM-DD-YYYY");
+
+
+
+
+
+  
+
+
+
+	</script>
+	<div id="map" style="width: 900px; height: 400px"></div>
+	<div id="locate">
+    		<button class="btn" onClick="changeLayer('Sat')">Saturday</button>
+            <button class="btn" onClick="changeLayer('Sun')">Sunday</button>
+            <button class="btn" onClick="changeLayer('Fri')">Friday</button>
+            </div>
+	
+</body>
+</html>
+
+

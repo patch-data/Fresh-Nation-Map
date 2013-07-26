@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Fresh Nation Sample</title>
+    <meta name="description" content="This is a sample of the map for Patch's map of farmer's markets in local areas. Data from Fresh Nation.">
+    <meta name="author" content="Patch.com">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min.js"></script>
+     <script src="https://raw.github.com/gf3/moment-range/master/lib/moment-range.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.js"></script>
+    <script type="text/javascript" src="js/wax.leaf.min.js"></script>
+    <script type="text/javascript" src="dist/cartodb-leaflet-min.js"></script>
+    <script type="text/javascript" src="dist/cartodb-popup-min.js"></script> 
+    <script src="js/bootstrap.min.js"></script>
+    <link href="css/freshnation_sample.css" rel="stylesheet">
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.css" />
+ <!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.ie.css" />
+ <![endif]-->
+    
+
+    <script type="text/javascript">
+    
+     function initialize() {
+     
+     
+    	$.getJSON('http://patchdata.cartodb.com/api/v2/sql/?q=SELECT * FROM freshnation_markets LIMIT 8', function(data){
+    	
+ 
+   for (var i = 0; i < data.rows.length; i++) {
+   var market = data.market;
+   var seasonsdates = eval(data.rows[i]['seasonsdates']);
+ if (typeof seasonsdates[0] !== 'undefined') {
+   var opendate = seasonsdates[0]['OpenDate'];
+   var closeddate = seasonsdates[0]['ClosedDate'];
+   console.log(opendate);
+   console.log(closeddate);
+   
+  }
+  }
+  
+		
+    var now = moment();
+   var html = '';
+  html += '<p><b>Open Date:</b> '+moment(opendate).format('MMMM D, YYYY')+'</p>';
+  html += '<p><b>Closed Date:</b> '+moment(closeddate).format('MMMM D, YYYY')+'</p>';
+  html += '<p><b>Today is</b>: '+moment(now).format('MMMM D, YYYY')+'</p>';
+  var start = new Date(opendate)
+  , end   = new Date(closeddate)
+  , when  = moment(now, "YYYY-MM-DD")
+  , range = moment().range(start, end);
+  var answer = when.within(range);
+  console.log(answer);
+  if (answer = 'true') {
+  html += "<p><b>It's open</b></p>";
+  } else {
+  html += "<p>It's closed</p>";
+			}
+$('#popup').html(html);
+  $('#popup').show();
+  
+})
+};
+
+initialize();
+</script>
+ <script type="text/javascript">
+
+			
+   </script>
+    
+
+ 
+
+      </head>
+      <body>
+      
+      <div id="popup"></div>
+      <div id="map"></div>
+  </body>
+</html>
+

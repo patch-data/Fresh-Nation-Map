@@ -8,8 +8,8 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/freshnation_sample.css" rel="stylesheet">
     <link rel="stylesheet" href="css/leaflet.css" />
+    
     <!--[if IE]><link rel="stylesheet" href="../css/leaflet.ie.css" /><![endif]-->
-    <link rel="stylesheet" href="fonts/fonts.css" type="text/css" />
 
     <script type="text/javascript">
     	var fresh_markets, map;
@@ -17,20 +17,30 @@
 // Create and load map using MapBox Tile
   	  function initialize() {
   			map = new L.Map('map_canvas').setView(new L.LatLng(40.690137,-73.856609), 11); 
-
-        var mapboxUrl = 'http://{s}.tiles.mapbox.com/v3/cartodb.map-1nh578vv/{z}/{x}/{y}.png',
+  			 var mapboxUrl = 'http://{s}.tiles.mapbox.com/v3/cartodb.map-1nh578vv/{z}/{x}/{y}.png',
             mapbox = new L.TileLayer(mapboxUrl, {maxZoom: 17,attribution:"Powered by Leaflet and Mapbox"});
         map.addLayer(mapbox,true);
               
-
+$.getJSON('http://patchdata.cartodb.com/api/v2/sql/?q=SELECT * FROM freshnation_markets LIMIT 10', function(data){
+   
+   for (var i = 0; i < data.rows.length; i++) {
+  
+   var seasonsdates = eval(data.rows[i]['seasonsdates']);
+ if (typeof seasonsdates[0] !== 'undefined') {
+   var opendate = seasonsdates[0]['OpenDate'];
+   var closeddate = seasonsdates[0]['ClosedDate'];
+   console.log(opendate);
+   console.log(closeddate);
+  }
+  
+  }
+})
     		
-// Get User's Data (Need to Fix)
           
-          var tD = new Date();
-var datenow = (tD.getMonth() + 1) + "-" + tD.getDay() + "-" + tD.getFullYear();
-$('#datebox').html(datenow);
+          
 
 // Gets the points from CartoDB and makes a layer
+
 
 var query="SELECT * FROM {{table_name}}";
         fresh_markets = new L.CartoDBLayer({
@@ -40,74 +50,109 @@ var query="SELECT * FROM {{table_name}}";
           query: query,
           interactivity: "cartodb_id, address, city, market, state, seasonsdates, zipcode, marketlinktofnsite",
 
+
+
 // Create Label that pops up when you hover over a marker
 
           featureOver: function(ev,latlng,pos,data) {
             document.body.style.cursor = "pointer";
-            showTooltipHover(data,pos)
+            showHover(data,pos)
+            function showHover(data,point) {
+            var html = "";
+            html += "<home_name>" + data.market + "</home_name>";
+             $("#hover").html(html);
+        $("#hover").css({left: (point.x + 5) + 'px', top: (point.y - 60) + 'px'})
+         $("#hover").fadeIn();
+            }
             
-             function showTooltipHover(data,point) {
-        var html = "";
-        html += "<home_name>" + data.market +"</home_name>";
-        $("#tooltip").html(html);
-        $("#tooltip").css({left: (point.x + 5) + 'px', top: (point.y - 60) + 'px'})
-         $("#tooltip").fadeIn();
-         
-         
-      }
+           
 
 // Create Search Bar (Need to Fix)
-         var mapa = $('#map_canvas');
-         
-         new L.Control.GeoSearch({
-provider: new L.GeoSearch.Provider.Google()
-}).addTo(mapa);       
+            
           },
+          
           
 // Makes label disappear when you hover away from a marker
           featureOut: function() {
             document.body.style.cursor = "default";
-            $("#tooltip").hide();
-            
+            $("#hover").hide();
           },
           
 // Makes pop-up box with all of the info appear when you click on marker
           featureClick: function(ev,latlng,pos,data) {
           document.body.style.cursor = "pointer";
+         
+          $("#hover").hide();
             showTooltip(data,pos)
-            
+            showHover(data,pos).stop();
              function showTooltip(data,point) {
+              $("#hover").hide();
         var html = "";
-        html += "<home_name>" + data.market +"</home_name>";
-        html += "<label>Address: <r>" + data.address + " <br>" + data.city + " , " + data.state + "  " + data.zipcode + "</label>";
-        html += "<label>Check out Fresh Nation for more info: <a href=" + data.marketlinktofnsite + "></a> ";
+        html += "<button onclick=" + btnFunction() + ">X</button><market>" + data.market +"</market>";
+        html += "<label>" + data.address + " <br>" + data.city + " , " + data.state + "  " + data.zipcode + "</label>";
+        html += "<label>For more info, click <a href=" + data.marketlinktofnsite + ">here</a></label> ";
         $("#tooltip").html(html);
         $("#tooltip").css({left: (point.x + 5) + 'px', top: (point.y - 60) + 'px'})
          $("#tooltip").fadeIn();
+          
          }
               
           },
+          
+          
+          
           auto_bound: false
         });
 
 // Adds CartoDB layer with all of the points to the Map Tile
         map.addLayer(fresh_markets)
+         new L.Control.GeoSearch({
+            provider: new L.GeoSearch.Provider.Google()
+        }).addTo(map_canvas); 
+        
         
       
+// Get User's Data (Need to Fix)
+ var tD = new Date();
+var datenow = (tD.getMonth() + 1) + "-" + tD.getDay() + "-" + tD.getFullYear();
+$('#datebox').html(datenow);
+
+      function btnFunction()
+{
+document.onclick=function(){ $("#vid").hide();
+$("#tooltip").hide();
+ $("#hover").show();
+};
 
 
-      
+
+}
+
   	  
 }    </script>
     
   </head>
   <body onload="initialize()">
-   <div class="alert alert-info" id="tooltip">
-      <p>Tooltip</p>
+  
+  <div class="alert alert-info" id="hover">
+      <p>Hover</p>
+      
+      
   
     
       
     </div>  
+  
+   <div class="alert alert-info" id="tooltip">
+      <p>Tooltip</p>
+      
+      
+  
+    
+      
+    </div>  
+    
+    
     
 <!--   The Map -->
   <div id="map_canvas"></div>
@@ -115,6 +160,10 @@ provider: new L.GeoSearch.Provider.Google()
 <!--   These are the checkboxes on the left (Need to Fix) -->
   
     <div id="content">
+    <div id="check"><input name="checkbox_name" id="checkbox_3" type="checkbox" onClick="changeLayer('All')" checked> <br>
+             SAT </div>
+    <div id="check"><input name="checkbox_name" id="checkbox_3" type="checkbox" onClick="changeLayer('All')" checked> <br>
+             SUN </div>
             <div id="check"><input name="checkbox_name" id="checkbox_3" type="checkbox" onClick="changeLayer('All')" checked> <br>
              MON </div>
             <div id="check"> <input name="checkbox_name" id="checkbox_2" type="checkbox" onClick="changeLayer('For Profit')" >  <br>TUES </div>
@@ -157,8 +206,10 @@ provider: new L.GeoSearch.Provider.Google()
   	  
   	  </script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-    <script src="js/leaflet.js"></script>
+    <script src="js/l.geosearch.provider.google.js"></script>
+    <script src="js/l.control.geosearch.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.js"></script>
+		<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="js/wax.leaf.min.js"></script>
     <script type="text/javascript" src="dist/cartodb-leaflet-min.js"></script>
     <script type="text/javascript" src="dist/cartodb-popup-min.js"></script> 
